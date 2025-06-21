@@ -1,46 +1,39 @@
 #include <iostream>
 
-class Car;
-class Driver;
-
-class Driver{
+class Heir {
     std::string name;
     unsigned age;
+    unsigned primogeniture;
     public:
-    Driver(std::string n, unsigned a): name(n), age(a) {};
-    friend bool age_review(const Driver& d, const Car& c);
-    friend void show(const Driver& d, const Car& c);
-    std::string get_name() const {return name;}
+    Heir (std::string n, unsigned a, unsigned p): name(n), age(a), primogeniture(p) {};
+    friend bool order_of_succession (Heir& h1, Heir& h2);
+    friend void show (Heir& h1, Heir& h2);
 };
 
-class Car{
-    std::string model;
-    unsigned legal_age = 18;
-    public:
-    Car(std::string m, unsigned l = 18): model(m), legal_age(l) {};
-    friend bool  age_review(const Driver& d, const Car& c);
-    friend void show(const Driver& d, const Car& c);
-    std::string get_model() const {return model;}
-};
-
-bool age_review(const Driver& d, const Car& c){
-    return d.age >= c.legal_age;
+bool order_of_succession(Heir& h1, Heir& h2){
+    return h1.age > h2.age;
 }
 
-void show(const Driver& d, const Car& c){
-    std::cout << d.get_name();
-    if(age_review(d, c)){
-        std::cout << " can drive a " << c.get_model() << std::endl;
-    }else{
-        std::cout << " is underage for driving" << std::endl;
+void show(Heir& h1, Heir& h2){
+    if(order_of_succession(h1, h2)){
+        std::cout << h1.name << " will be the next king because he is older than " << h2.name << std::endl;
+    }
+    else if(h1.age == h2.age){
+        std::cout << "Since the sons are the same age, the successor is determined by primogeniture: ";
+        if(h1.primogeniture < h2.primogeniture && h1.primogeniture != h2.primogeniture){
+            std::cout << h1.name << " will be the next king" << std::endl;
+        }else{
+            std::cout << h2.name << " will be the next king" << std::endl;
+        }
     }
 }
 
 int main(){
-    Car car {"Toyota"};
+    Heir arthur {"Arthur", 19, 1};
+    Heir charles {"Charles", 15, 2};
+    Heir george {"George", 15, 1};
 
-    Driver d1{"John", 17}, d2 {"Alex", 20}, d3 {"Mike", 33};
-    show(d1, car);
-    show(d2, car);
-    show(d3, car);
+    show(arthur, charles);
+    show(arthur, george);
+    show(charles, george);
 }
