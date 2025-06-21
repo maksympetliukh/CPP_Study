@@ -1,43 +1,46 @@
 #include <iostream>
 
-class Car {
+class Car;
+class Driver;
+
+class Driver{
+    std::string name;
+    unsigned age;
     public:
-    std::string brand;
-    std::string model;
-    std::string engine;
-    std::string fuel;
-    unsigned  power;
-    unsigned price;
-    unsigned year;
-
-    Car(std::string b, std::string m,std::string e, std::string f,  unsigned pow, unsigned pri, unsigned y){
-        brand = b;
-        model = m;
-        engine = e;
-        fuel = f;
-        power = pow; 
-        price = pri;
-        year = y;
-    }
-
-    Car (const Car &p){
-        brand = p.brand;
-        model = "Corolla-E";
-        engine = "E-Core";
-        fuel = "Electric";
-        power = p.power + 30;
-        price = p.price + 5000;
-        year = p.year + 4;
-    }
-
-    void show(){
-        std::cout << "\nBrand: " << brand << "\nModel: " << model << "\nEngine: " << engine << "\nFuel type: " << fuel << "\nPower: " << power << "\nPrice: " << price << "\nRelease year: " << year << std::endl;
-    }
+    Driver(std::string n, unsigned a): name(n), age(a) {};
+    friend bool age_review(const Driver& d, const Car& c);
+    friend void show(const Driver& d, const Car& c);
+    std::string get_name() const {return name;}
 };
 
+class Car{
+    std::string model;
+    unsigned legal_age = 18;
+    public:
+    Car(std::string m, unsigned l = 18): model(m), legal_age(l) {};
+    friend bool  age_review(const Driver& d, const Car& c);
+    friend void show(const Driver& d, const Car& c);
+    std::string get_model() const {return model;}
+};
+
+bool age_review(const Driver& d, const Car& c){
+    return d.age >= c.legal_age;
+}
+
+void show(const Driver& d, const Car& c){
+    std::cout << d.get_name();
+    if(age_review(d, c)){
+        std::cout << " can drive a " << c.get_model() << std::endl;
+    }else{
+        std::cout << " is underage for driving" << std::endl;
+    }
+}
+
 int main(){
-    Car toyota2021 {"Toyota", "Corolla", "TDE-6", "Diesel", 300, 20000, 2021};
-    toyota2021.show();
-    Car toyota2025 {toyota2021};
-    toyota2025.show();
+    Car car {"Toyota"};
+
+    Driver d1{"John", 17}, d2 {"Alex", 20}, d3 {"Mike", 33};
+    show(d1, car);
+    show(d2, car);
+    show(d3, car);
 }
